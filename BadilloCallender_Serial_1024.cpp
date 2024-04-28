@@ -17,10 +17,10 @@ using namespace std;
 
 // Represents a 2-D vector of integers, i.e a 2-D dynamic array that can
 // change in size.
-using Matrix_t = vector<vector<float>>;
+using Matrix_t = vector<vector<double>>;
 // Represents a row vector of integers, i.e a 1-D array that can change
 // in size.
-using Row_t = vector<float>;
+using Row_t = vector<double>;
 
 // Size N for NxN square matrix.
 const size_t matrix_size = 32;
@@ -106,7 +106,7 @@ void lu_decomposition(const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &
         for (size_t k = i; k < size; k++)
         {
             // Summation of L(i, j) * U(j, k)
-            float sum = 0;
+            double sum = 0;
             for (size_t j = 0; j < i; j++)
             {
                 sum += (lower_matrix[i][j] * upper_matrix[j][k]);
@@ -126,7 +126,7 @@ void lu_decomposition(const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &
             else
             {
                 // Summation of L(k, j) * U(j, i)
-                float sum = 0;
+                double sum = 0;
                 for (size_t j = 0; j < i; j++)
                 {
                     sum += (lower_matrix[k][j] * upper_matrix[j][i]);

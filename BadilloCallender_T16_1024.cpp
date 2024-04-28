@@ -16,14 +16,16 @@
 #include <thread>
 #include <utility>
 #include <functional>
+#include <random>
+#include <limits>
 using namespace std;
 
 // Represents a 2-D vector of integers, i.e a 2-D dynamic array that can
 // change in size.
-using Matrix_t = vector<vector<float>>;
+using Matrix_t = vector<vector<double>>;
 // Represents a row vector of integers, i.e a 1-D array that can change
 // in size.
-using Row_t = vector<float>;
+using Row_t = vector<double>;
 
 // Size N for NxN square matrix.
 const size_t matrix_size = 32;
@@ -47,6 +49,13 @@ float determinant_triangular(const Matrix_t &matrix);
 /// @return Matrix_t, the identity matrix.
 Matrix_t identity_matrix(const size_t size);
 
+/// @brief Creates an NxN matrix with random values.
+/// @param size N, size of the matrix.
+/// @param min_val Minimum value for the random number.
+/// @param max_val Maximum value for the random number.
+/// @return 
+Matrix_t random_matrix(const size_t size, const double min_val, const double max_val);
+
 /// @brief Prints out the contents of a matrix.
 /// @param matrix
 void print_matrix(const Matrix_t &matrix);
@@ -57,7 +66,7 @@ int main()
     float determinant, l_det, u_det;
 
     // Matrix to decompose
-    Matrix_t matrix = identity_matrix(matrix_size);
+    Matrix_t matrix = random_matrix(matrix_size, -1.0, 1.0);
 
     // Lower and upper triangular matrices
     Matrix_t lower(matrix_size, Row_t(matrix_size, 0));
@@ -104,6 +113,26 @@ int main()
     return 0;
 }
 
+Matrix_t random_matrix(const size_t size, const double min_val, const double max_val)
+{
+    // Setup up random number generation
+    default_random_engine generator;
+    uniform_real_distribution<double> dist(min_val, max_val);
+
+    Matrix_t matrix(size, Row_t(size));
+
+    // Initialize matrix with random numbers
+    for (auto &row : matrix)
+    {
+        for (auto &value : row)
+        {
+            value = dist(generator);
+        }
+    }
+
+    return matrix;
+}
+
 Matrix_t identity_matrix(const size_t size)
 {
     // Create square matrix with elements
@@ -135,7 +164,7 @@ void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &l
         for (size_t k = i; k < size; k++)
         {
             // Summation of L(i, j) * U(j, k)
-            float sum = 0;
+            double sum = 0;
             for (size_t j = 0; j < i; j++)
             {
                 sum += (lower_matrix[i][j] * upper_matrix[j][k]);
@@ -155,7 +184,7 @@ void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &l
             else
             {
                 // Summation of L(k, j) * U(j, i)
-                float sum = 0;
+                double sum = 0;
                 for (size_t j = 0; j < i; j++)
                 {
                     sum += (lower_matrix[k][j] * upper_matrix[j][i]);
