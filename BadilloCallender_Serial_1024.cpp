@@ -1,3 +1,15 @@
+/**
+ * Team Members: Angel Badillo, Chad Callender
+ * Final Project: Calculating the Determinant
+ * 
+ * Description:
+ * Text here.
+ * 
+ * Compilation Instructions:
+ * 
+ * Execution Instructions:
+ * 
+ */
 #include <iostream>
 #include <cstddef>
 #include <vector>
@@ -10,33 +22,50 @@ using Matrix_t = vector<vector<float>>;
 // in size.
 using Row_t = vector<float>;
 
-const size_t matrix_size = 3;
+// Size N for NxN square matrix.
+const size_t matrix_size = 32;
 
+/// @brief Performs LU Decomposition using the Doolittle Algorithm.
+/// @param matrix Matrix of size NxN to decompose.
+/// @param lower_matrix Lower triangular matrix.
+/// @param upper_matrix Upper triangular matrix.
 void lu_decomposition(const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &upper_matrix);
 
+/// @brief Computes the determinant of a triangular matrix.
+/// @param matrix Triangular matrix.
+/// @return The determinant, a float.
 float determinant_triangular(const Matrix_t &matrix);
 
+/// @brief Creates an NxN identity matrix.
+/// @param size N, size of identity matrix.
+/// @return Matrix_t, the identity matrix.
+Matrix_t identity_matrix(const size_t size);
+
+/// @brief Prints out the contents of a matrix.
+/// @param matrix 
 void print_matrix(const Matrix_t &matrix);
 
 int main()
 {
+    // Determinants for original matrix, lower triangular matrix, and upper triangular matrix
     float determinant, l_det, u_det;
 
-    Matrix_t matrix = {
-        {2, -1, -2},
-        {-4, 6, 3},
-        {-4, -2, 8}};
+    // Matrix to decompose
+    Matrix_t matrix = identity_matrix(matrix_size);
 
-    // Initializing output matrices
+    // Lower and upper triangular matrices
     Matrix_t lower(matrix_size, Row_t(matrix_size, 0));
     Matrix_t upper(matrix_size, Row_t(matrix_size, 0));
 
+    // Perform LU decomposition
     lu_decomposition(matrix, lower, upper);
 
+    // Print results
     cout << "Original Matrix" << '\n';
     print_matrix(matrix);
 
-    cout << "Lower Triangular Matrix" << "\n\n";
+    cout << "Lower Triangular Matrix"
+         << "\n";
     print_matrix(lower);
 
     cout << "Upper Triangular Matrix" << '\n';
@@ -50,6 +79,21 @@ int main()
     cout << "det(U) = " << u_det << '\n';
     cout << "det(A) = " << determinant << '\n';
 
+    return 0;
+}
+
+Matrix_t identity_matrix(const size_t size)
+{
+    // Create square matrix with elements
+    // set to 0
+    Matrix_t matrix(size, Row_t(size, 0));
+
+    for (size_t i = 0; i < size; i++)
+    {
+        matrix[i][i] = 1;
+    }
+
+    return matrix;
 }
 
 void lu_decomposition(const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &upper_matrix)

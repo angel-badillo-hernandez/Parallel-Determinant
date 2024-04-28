@@ -1,0 +1,198 @@
+/**
+ * Team Members: Angel Badillo, Chad Callender
+ * Final Project: Calculating the Determinant
+ *
+ * Description:
+ * Text here.
+ *
+ * Compilation Instructions:
+ *
+ * Execution Instructions:
+ *
+ */
+#include <iostream>
+#include <cstddef>
+#include <vector>
+#include <thread>
+#include <utility>
+#include <functional>
+using namespace std;
+
+// Represents a 2-D vector of integers, i.e a 2-D dynamic array that can
+// change in size.
+using Matrix_t = vector<vector<float>>;
+// Represents a row vector of integers, i.e a 1-D array that can change
+// in size.
+using Row_t = vector<float>;
+
+// Size N for NxN square matrix.
+const size_t matrix_size = 32;
+// Number of threads
+const size_t num_threads = 16;
+
+/// @brief Performs a part of LU decomposition, for a given thread.
+/// @param threadId Index of the thread
+/// @param matrix Square matrix to decompose.
+/// @param lower_matrix Lower triangular matrix.
+/// @param upper_matrix Upper triangular matrix.
+void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &upper_matrix);
+
+/// @brief Computes the determinant of a triangular matrix.
+/// @param matrix Triangular matrix.
+/// @return The determinant, a float.
+float determinant_triangular(const Matrix_t &matrix);
+
+/// @brief Creates an NxN identity matrix.
+/// @param size N, size of identity matrix.
+/// @return Matrix_t, the identity matrix.
+Matrix_t identity_matrix(const size_t size);
+
+/// @brief Prints out the contents of a matrix.
+/// @param matrix
+void print_matrix(const Matrix_t &matrix);
+
+int main()
+{
+    // Determinants for original matrix, lower triangular matrix, and upper triangular matrix
+    float determinant, l_det, u_det;
+
+    // Matrix to decompose
+    Matrix_t matrix = identity_matrix(matrix_size);
+
+    // Lower and upper triangular matrices
+    Matrix_t lower(matrix_size, Row_t(matrix_size, 0));
+    Matrix_t upper(matrix_size, Row_t(matrix_size, 0));
+
+    // Vector to store threads
+    vector<thread> threads;
+
+    // Creating threads and storing them in the vector of threads
+    for (size_t i = 0; i < num_threads; i++)
+    {
+        // Create thread
+        thread temp_thread = thread(lu_decomposition, i, cref(matrix), ref(lower), ref(upper));
+        // Move contents of temp_thread into threads vector,
+        // instead of copying.
+        threads.push_back(move(temp_thread));
+    }
+
+    // Join threads for synchronization
+    for (size_t i = 0; i < num_threads; i++)
+    {
+        threads[i].join();
+    }
+
+    // Print results
+    cout << "Original Matrix" << '\n';
+    print_matrix(matrix);
+
+    cout << "Lower Triangular Matrix"
+         << "\n";
+    print_matrix(lower);
+
+    cout << "Upper Triangular Matrix" << '\n';
+    print_matrix(upper);
+
+    l_det = determinant_triangular(lower);
+    u_det = determinant_triangular(upper);
+    determinant = l_det * u_det;
+
+    cout << "det(L) = " << l_det << '\n';
+    cout << "det(U) = " << u_det << '\n';
+    cout << "det(A) = " << determinant << '\n';
+
+    return 0;
+}
+
+Matrix_t identity_matrix(const size_t size)
+{
+    // Create square matrix with elements
+    // set to 0
+    Matrix_t matrix(size, Row_t(size, 0));
+
+    // Set elements across diagonal to 1
+    for (size_t i = 0; i < size; i++)
+    {
+        matrix[i][i] = 1;
+    }
+
+    return matrix;
+}
+
+void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &lower_matrix, Matrix_t &upper_matrix)
+{
+    // N from NxN sized matrix
+    size_t size = matrix.size();
+
+    // Starting index for the outer for loop
+    size_t start = threadId * size / num_threads;
+    // One over the last index for the outer for loop
+    size_t end = (threadId + 1) * size / num_threads;
+
+    for (size_t i = start; i < end; i++)
+    {
+        // Upper triangular
+        for (size_t k = i; k < size; k++)
+        {
+            // Summation of L(i, j) * U(j, k)
+            float sum = 0;
+            for (size_t j = 0; j < i; j++)
+            {
+                sum += (lower_matrix[i][j] * upper_matrix[j][k]);
+            }
+            // Evaluating U(i, k)
+            upper_matrix[i][k] = matrix[i][k] - sum;
+        }
+
+        // Lower triangular
+        for (size_t k = i; k < size; k++)
+        {
+            // Diagonal as 1
+            if (i == k)
+            {
+                lower_matrix[i][i] = 1;
+            }
+            else
+            {
+                // Summation of L(k, j) * U(j, i)
+                float sum = 0;
+                for (size_t j = 0; j < i; j++)
+                {
+                    sum += (lower_matrix[k][j] * upper_matrix[j][i]);
+                }
+
+                // Evaluating L(k, i)
+                lower_matrix[k][i] = (matrix[k][i] - sum) / upper_matrix[i][i];
+            }
+        }
+    }
+}
+
+float determinant_triangular(const Matrix_t &matrix)
+{
+    size_t size = matrix.size();
+
+    // 0x0 matrix has determinant of 1
+    float determinant = 1;
+
+    // Compute determinant of triangular matrix
+    // by multiplying across the diagonals
+    for (size_t i = 0; i < size; i++)
+    {
+        determinant *= matrix[i][i];
+    }
+
+    return determinant;
+}
+
+void print_matrix(const Matrix_t &matrix)
+{
+    for (auto &&row : matrix)
+    {
+        for (auto &&value : row)
+        {
+            cout << value << ' ';
+        }
+        cout << '\n';
+    }
+}
