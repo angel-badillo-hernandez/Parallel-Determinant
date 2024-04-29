@@ -43,8 +43,8 @@ void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &l
 
 /// @brief Computes the determinant of a triangular matrix.
 /// @param matrix Triangular matrix.
-/// @return The determinant, a float.
-float determinant_triangular(const Matrix_t &matrix);
+/// @return The determinant, a double.
+double determinant_triangular(const Matrix_t &matrix);
 
 /// @brief Creates an NxN identity matrix.
 /// @param size N, size of identity matrix.
@@ -65,7 +65,7 @@ void print_matrix(const Matrix_t &matrix);
 int main()
 {
     // Determinants for original matrix, lower triangular matrix, and upper triangular matrix
-    float determinant, l_det, u_det;
+    double determinant, l_det, u_det;
 
     // Matrix to decompose
     Matrix_t matrix = random_matrix(matrix_size, -1.0, 1.0);
@@ -200,12 +200,12 @@ void lu_decomposition(const size_t threadId, const Matrix_t &matrix, Matrix_t &l
     }
 }
 
-float determinant_triangular(const Matrix_t &matrix)
+double determinant_triangular(const Matrix_t &matrix)
 {
     size_t size = matrix.size();
 
     // 0x0 matrix has determinant of 1
-    float determinant = 1;
+    double determinant = 1;
 
     // Compute determinant of triangular matrix
     // by multiplying across the diagonals
