@@ -77,6 +77,9 @@ int main()
     // Vector to store threads
     vector<thread> threads;
 
+    // Begin timing
+    auto start_time = std::chrono::steady_clock::now();
+
     // Creating threads and storing them in the vector of threads
     for (size_t i = 0; i < num_threads; i++)
     {
@@ -93,21 +96,19 @@ int main()
         threads[i].join();
     }
 
-    // Print results
-    cout << "Original Matrix" << '\n';
-    print_matrix(matrix);
-
-    cout << "Lower Triangular Matrix"
-         << "\n";
-    print_matrix(lower);
-
-    cout << "Upper Triangular Matrix" << '\n';
-    print_matrix(upper);
-
+    // Compute determinant
     l_det = determinant_triangular(lower);
     u_det = determinant_triangular(upper);
     determinant = l_det * u_det;
 
+    // Stop timing
+    auto end_time = std::chrono::steady_clock::now();
+
+    // Calculate elapsed time
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
+
+    // Print results
+    cout << "Elapsed time (nanoseconds): " << elapsed << '\n';
     cout << "det(L) = " << l_det << '\n';
     cout << "det(U) = " << u_det << '\n';
     cout << "det(A) = " << determinant << '\n';

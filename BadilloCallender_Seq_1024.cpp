@@ -68,24 +68,25 @@ int main()
     Matrix_t lower(matrix_size, Row_t(matrix_size, 0));
     Matrix_t upper(matrix_size, Row_t(matrix_size, 0));
 
+    // Begin timing
+    auto start_time = std::chrono::steady_clock::now();
+
     // Perform LU decomposition
     lu_decomposition(matrix, lower, upper);
 
-    // Print results
-    cout << "Original Matrix" << '\n';
-    print_matrix(matrix);
-
-    cout << "Lower Triangular Matrix"
-         << "\n";
-    print_matrix(lower);
-
-    cout << "Upper Triangular Matrix" << '\n';
-    print_matrix(upper);
-
+    // Comput determinant
     l_det = determinant_triangular(lower);
     u_det = determinant_triangular(upper);
     determinant = l_det * u_det;
 
+    // Stop timing
+    auto end_time = std::chrono::steady_clock::now();
+
+    // Calculate elapsed time
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
+
+    // Print results
+    cout << "Elapsed time (nanoseconds): " << elapsed << '\n';
     cout << "det(L) = " << l_det << '\n';
     cout << "det(U) = " << u_det << '\n';
     cout << "det(A) = " << determinant << '\n';
