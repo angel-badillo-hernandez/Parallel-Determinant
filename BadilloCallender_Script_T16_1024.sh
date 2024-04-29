@@ -25,13 +25,10 @@ g++ BadilloCallender_T16_1024.cpp -lpthread -o parallel_16_1024
 # Set thread count
 export OMP_NUM_THREADS=16
 
-# Launch C++ multithreaded code
-./parallel_16_1024
-
-# # Launch parallel code...
-# # loop runs code three times
-# for value in {1..3}
-# do
-#     ibrun ./parallel_16_1024       # Use ibrun instead of mpirun or mpiexec
-#     echo ''              # newline
-# done
+# Launch parallel code...
+# loop runs code three times
+for value in {1..3}
+do
+    ibrun ./parallel_16_1024       # Use ibrun instead of mpirun or mpiexec
+    echo ''              # newline
+done

@@ -23,12 +23,9 @@ date
 g++ BadilloCallender_Seq_1024.cpp -o serial_1024
 
 # Launch serial code...
-./serial_1024
-
-# # Launch serial code...
-# # loop runs code three times
-# for value in {1..3}
-# do
-#     ./serial_1024        # Do not use ibrun or any other MPI launcher
-#     echo ''              # newline
-# done
+# loop runs code three times
+for value in {1..3}
+do
+    ./serial_1024        # Do not use ibrun or any other MPI launcher
+    echo ''              # newline
+done
