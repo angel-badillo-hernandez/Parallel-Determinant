@@ -20,7 +20,7 @@ pwd
 date
 
 # Compile parallel code
-g++ BadilloCallendar_T16_1024.cpp -o parallel_16_1024
+g++ BadilloCallender_T16_1024.cpp -lpthread -o parallel_16_1024
 
 # Set thread count
 export OMP_NUM_THREADS=16

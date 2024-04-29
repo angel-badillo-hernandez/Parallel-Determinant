@@ -15,6 +15,8 @@
 #include <vector>
 #include <random>
 #include <limits>
+#include <ctime>
+#include <chrono>
 using namespace std;
 
 // Represents a 2-D vector of integers, i.e a 2-D dynamic array that can
@@ -94,7 +96,7 @@ int main()
 Matrix_t random_matrix(const size_t size, const double min_val, const double max_val)
 {
     // Setup up random number generation
-    default_random_engine generator;
+    default_random_engine generator((long unsigned int)time(0));
     uniform_real_distribution<double> dist(min_val, max_val);
 
     Matrix_t matrix(size, Row_t(size));
