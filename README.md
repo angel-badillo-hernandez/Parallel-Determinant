@@ -1,0 +1,3 @@
+# Calculating Determinant of Square Matrices with Doolittle Algorithm
+## Using Multhreading in C++ for Parallelization
+These groups of C++ programs in folders 16_threads, 32_threads, and serial contain different versions of solution for calculating the determinant of a square matrix using the Doolittle algorithm. The parallized solutions utilize C++ threads to evenly distribute the work amongst the allocated threads in order to achieve a substantial speedup.
